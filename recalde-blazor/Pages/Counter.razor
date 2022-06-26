@@ -1,4 +1,8 @@
 ﻿@page "/counter"
+@using System.Text.Json
+@using System.Text.Json.Serialization;
+@using System.Text;
+@inject IHttpClientFactory ClientFactory
 
 <PageTitle>Counter</PageTitle>
 
@@ -11,8 +15,28 @@
 @code {
     private int currentCount = 0;
 
-    private void IncrementCount()
+    private async void IncrementCount()
     {
         currentCount++;
+
+        var client = ClientFactory.CreateClient();
+
+        var url = "https://api.robrecalde.com/books/";
+        var httpClient = new HttpClient();
+        var book = new 
+        {
+            Title = "Oryx and Crake",
+            ISBN= "0-7710-0868-6",
+            Authors = new string[]{ "Margaret Atwood" }
+        };
+
+        var response = await client.PostAsJsonAsync(url, book);
+
+        if (response.IsSuccessStatusCode)
+        {
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+            
+        }
+
     }
 }
